@@ -247,6 +247,10 @@ bash prepare_source.sh 74      # 或 all
 - 7.0 – 8.1 都已停止维护，本仓库只是应急方案。**长期请迁移到 PHP 8.2 或更高版本**
 - 使用前请先在测试环境验证你自己的业务。本仓库按"原样"提供，不对使用后果承担责任
 
+## 联系方式
+
+有事情可以联系：<https://x.com/0xTYZ>
+
 ## 许可
 
 `patches/` 里的补丁和源码包里的 PHP 源码遵循 [PHP License v3.01](https://www.php.net/license/3_01.txt)。
