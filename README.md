@@ -2,9 +2,9 @@
 
 > 联系方式：有事情可以联系 <https://x.com/0xTYZ>
 
-宝塔面板（BT Panel）上已停止维护的 PHP 版本（7.0 – 8.1）的 **PHP2Shell（CVE-2026-109618 / CVE-2026-109619）修复包**。仓库里有打好补丁的源码包，以及一键完成编译、替换、回滚的脚本。
+宝塔面板（BT Panel）上已停止维护的 PHP 版本（5.4 – 8.1）的 **PHP2Shell（CVE-2026-109618 / CVE-2026-109619）修复包**。仓库里有打好补丁的源码包，以及一键完成编译、替换、回滚的脚本。
 
-> Patched PHP source tarballs and a one-command upgrade script that fix PHP2Shell (CVE-2026-109618 / CVE-2026-109619) for end-of-life PHP 7.0 – 8.1 builds installed by BT Panel (宝塔).
+> Patched PHP source tarballs and a one-command upgrade script that fix PHP2Shell (CVE-2026-109618 / CVE-2026-109619) for end-of-life PHP 5.4 – 8.1 builds installed by BT Panel (宝塔).
 
 ---
 
@@ -25,6 +25,9 @@ PHP-FPM、Apache mod_php、php-cgi 等处理 Web 请求的方式都受影响。P
 
 | 宝塔 PHP 版本 | 升级后 | 补丁来源 | 源码包 |
 |---|---|---|---|
+| 5.4.x | 5.4.45 | 基于官方 7.4 补丁移植到 PHP5 引擎（**非官方**） | `php-5.4.45-cve2026.tar.gz` |
+| 5.5.x | 5.5.38 | 基于官方 7.4 补丁移植到 PHP5 引擎（**非官方**） | `php-5.5.38-cve2026.tar.gz` |
+| 5.6.x | 5.6.40 | 基于官方 7.4 补丁移植到 PHP5 引擎（**非官方**） | `php-5.6.40-cve2026.tar.gz` |
 | 7.0.x | 7.0.33 | 基于官方 7.4 补丁移植（**非官方**） | `php-7.0.33-cve2026.tar.gz` |
 | 7.1.x | 7.1.33 | 基于官方 7.4 补丁移植（**非官方**） | `php-7.1.33-cve2026.tar.gz` |
 | 7.2.x | 7.2.34 | 基于官方 7.4 补丁移植（**非官方**） | `php-7.2.34-cve2026.tar.gz` |
@@ -38,7 +41,7 @@ PHP-FPM、Apache mod_php、php-cgi 等处理 Web 请求的方式都受影响。P
 - 同一大版本内升级，扩展 ABI 不变，redis、swoole_loader 等已安装的扩展**不需要重新编译**
 - **PHP 8.2 及以上**：直接在宝塔面板里更新到官方修复版即可，不需要本仓库
 
-> ⚠️ 7.0 – 7.3 的补丁是从官方 7.4 补丁移植的，**没有经过 PHP 官方审核**。移植细节见下文的[补丁说明](#补丁说明)。介意的话请优先升级到 PHP 8.2+。
+> ⚠️ 5.4 – 7.3 的补丁是从官方 7.4 补丁移植的，**没有经过 PHP 官方审核**（其中 5.4 – 5.6 是移植到 PHP7 之前的老引擎，差异更大）。移植细节见下文的[补丁说明](#补丁说明)。介意的话请优先升级到 PHP 8.2+。
 
 ## 支持的系统
 
@@ -46,15 +49,15 @@ PHP-FPM、Apache mod_php、php-cgi 等处理 Web 请求的方式都受影响。P
 
 | 系统 | 编译器 | 实测情况 |
 |---|---|---|
-| Ubuntu 16.04 | gcc 5.4 | ✅ x86_64、ARM64：7 个版本全流程 + 回归测试 |
-| CentOS 7 | gcc 4.8.5 | ✅ x86_64：7 个版本全流程 + 回归测试；ARM64：7 个版本全流程 |
+| Ubuntu 16.04 | gcc 5.4 | ✅ x86_64：10 个版本全流程 + 回归测试；ARM64：7.0 – 8.1 全流程，5.4 – 5.6 编译 + 回归测试 |
+| CentOS 7 | gcc 4.8.5 | ✅ x86_64：10 个版本全流程 + 回归测试；ARM64：7.0 – 8.1 全流程 |
 | Debian、Ubuntu 18.04+、CentOS 8 / Rocky / AlmaLinux 等 | — | 未实测，理论上可用 |
 
 "理论上可用"的前提是：宝塔当初能在这台服务器上把这个 PHP 编译出来。如果之后系统升级过（比如 openssl 被换掉了），`build` 这一步可能会失败。失败时线上 PHP 不受任何影响，把 `/www/server/php-cve2026/logs/` 里的日志拿去排查即可。
 
 ## 快速开始
 
-以 PHP 7.4 为例，其他版本把 `74` 换成 `70` / `71` / `72` / `73` / `80` / `81`。所有命令都用 root 执行。
+以 PHP 7.4 为例，其他版本把 `74` 换成 `54` / `55` / `56` / `70` / `71` / `72` / `73` / `80` / `81`。所有命令都用 root 执行。
 
 ### 1. 下载脚本和源码包
 
@@ -172,6 +175,19 @@ rm -rf /www/server/php/*.bak-*
 | `php-7.2.34-…patch` | 7.4 补丁移植到 7.2 |
 | `php-7.1.33-…patch` | 7.4 补丁移植到 7.1 |
 | `php-7.0.33-…patch` | 7.4 补丁移植到 7.0 |
+| `php-5.6.40-…patch` | 7.4 补丁移植到 5.6（PHP7 之前的引擎） |
+| `php-5.5.38-…patch` | 7.4 补丁移植到 5.5（PHP7 之前的引擎） |
+| `php-5.4.45-…patch` | 7.4 补丁移植到 5.4（PHP7 之前的引擎） |
+
+### 5.4 – 5.6（PHP7 之前的引擎）
+
+5.x 用的是 PHP 7 重写之前的引擎，和 7.0 的差异是结构性的，所以这三个补丁是对照各版本源码重新推导的，核心缓解措施与官方 7.4 一致：内存超限 / 分配溢出不再走普通 Fatal error（会 bailout 并在半初始化的请求数据上做清理），而是把错误写到 stderr 后直接 `_exit(1)` 结束 worker；请求结束时强制复位错误/异常处理器、对象存储、`EG(exception)` 等残留状态。相对 7.0 补丁的主要调整：
+
+- **内存错误出口**：老的 `zend_mm`（`zend_alloc.c`）里把 `zend_mm_safe_error` 改成不再 `zend_bailout()`，直接 `_exit(1)`；并新增 `zend_mm_safe_error_ex()` 供各处分配溢出检查（`safe_address` 各架构分支、`_safe_emalloc_string`、`zend_hash`、`zend_strtod` 的 `Balloc`）复用
+- **字符串拼接溢出**：5.x 字符串长度是 `int`，拼接在 `Zend/zend_operators.c` 的 `concat_function`（而不是 7.x 内联在 VM 里），所以**不需要重新生成 `zend_vm_execute.h`**。把其中的 `String size overflow` 致命错误改为走 `_exit(1)`（5.4 有 2 处，5.5/5.6 有 4 处）
+- **不照搬 `array_init_singleton`**：7.x 补丁用 `nTableSize = 1` 把 GPC 数组压到最小，但 PHP7 之前的哈希表是**懒分配、最小 8 槽、且用 `nTableMask == 0` 作为"arBuckets 未初始化"的哨兵**，强行塞 1 会破坏这个哨兵；而 `_exit(1)` 本身已经彻底关闭了"内存超限→半初始化数据被清理"的窗口，这个微优化对 5.x 没有意义，故省略（`main/php_variables.c` 不改）
+- **本就不存在的改动**：5.x 的 `zend_hash` 扩容溢出是**静默停止扩张**、没有 `zend_error_noreturn` 可改；没有 `zend_safe_address_guarded`（`zend_multiply.h`）；没有 `zend_string.h`。这几处 7.0 补丁的改动在 5.x 不适用，无需处理
+- 其余（`ext/session` 关闭上传进度、`main/rfc1867.c` 的 `max_multipart_body_parts` 与 multipart 头过滤、`main/SAPI.c` 释放后置空、`main/main.c` 复位 `http_globals` 与 `modules_activated`、`Zend/zend_llist.c` 置空链表头尾）与 7.0 补丁一一对应，按 5.x 的类型（字符串是 `char*`、`http_globals[i]` 是 `zval*` 等）落实
 
 7.0 – 7.3 移植时，相对官方 7.4 补丁的主要调整：
 
@@ -228,6 +244,23 @@ rm -rf /www/server/php/*.bak-*
 
 在 ARM64 的 CentOS 7 上，gcc 4.8.5 不支持 PHP 7.4+ 里一段 ARM 专用的内联汇编，**未打补丁的官方源码同样编译不过**；因此 ARM64 那一轮测试 7.4 / 8.0 / 8.1 时设置了 `ac_cv__asm_goto=no` 关闭这段汇编。x86_64 不受影响，x86_64 这一轮没有用这个设置；源码包和脚本都没有改动。宝塔的 swoole_loader 扩展无法在测试环境中模拟；如果升级后加载失败，脚本的扩展自检会自动回滚。
 
+### 5.4 / 5.5 / 5.6（新增，2026-10-22）
+
+测试方法与上面 7.0 – 8.1 的 x86_64 轮完全相同：在同一台 x86_64 实体服务器上，用 Docker 分别模拟 Ubuntu 16.04 和 CentOS 7 的宝塔环境，按宝塔编译参数装好未打补丁的版本（含 redis、opcache、php-fpm 服务），再用脚本走完 status / build / install / rollback / 再 install，跑 FPM 行为测试，并与未打补丁的同版本做回归对比。两个系统各 3 个版本全部通过，结果完全一致：
+
+| 版本 | 扩展保留 | FPM 行为 | 回滚 / 再升级 | 回归测试：多出的失败数 / 测试总数 |
+|---|---|---|---|---|
+| 5.4 | ✅ 46 / 46 | ✅ | ✅ | 9 / ~3700 |
+| 5.5 | ✅ 48 / 48 | ✅ | ✅ | 9 / ~3880 |
+| 5.6 | ✅ 48 / 48 | ✅ | ✅ | 9 / ~4020 |
+
+- **回归测试**：多出的 9 个失败与 7.0 – 8.0 完全相同，都是补丁有意改变的行为：`ext/session/tests/rfc1867*.phpt` 共 8 个（上传进度被关闭）+ `tests/lang/bug45392.phpt`（内存超限时进程直接退出）。没有"只在未打补丁版本失败"的用例，两个系统结果相同
+- **FPM 行为**：内存超限的 worker 直接 `_exit(1)`（php-fpm 日志 `child ... exited with code 1`），FPM 自动拉起新进程、后续请求正常；上一个请求设置的错误处理器不会残留到下一个请求；嵌套数组参数解析正常
+- **链接库**：新旧 php-fpm 链接的系统库一致（脚本自检通过）
+- **源码包可复现**：在这台 x86_64 上用 `prepare_source.sh 54 / 55 / 56` 从 php.net 官方源码（5.4.45 只有 `.tar.gz`，5.5 / 5.6 用 `.tar.xz`，SHA256 均与 php.net 公布值一致）重新生成，解压后的源码树与仓库里的包逐字节一致
+- 5.4 没有内置 opcache（宝塔的 5.4 也没有），所以 5.4 的扩展数比 5.5 / 5.6 少 2 个；5.x 测试用的 redis 扩展是 phpredis 4.3.0（5.3.7 只支持 PHP 7+）
+- 另外在 ARM64（Ubuntu 16.04 容器）上也做过编译、补丁自检和回归对比，结论一致。ARM64 上编译 5.4.45 需要给 `configure` 加 `--build=aarch64-unknown-linux-gnu`（其 2015 年的 `config.guess` 不认识 `aarch64`，未打补丁的官方源码同样如此）；x86_64 不需要
+
 ## 自行生成源码包
 
 不想直接使用仓库里的源码包，可以用 `prepare_source.sh` 从 php.net 下载官方源码，校验 SHA256 后打上 `patches/` 里的补丁，重新生成：
@@ -243,7 +276,7 @@ bash prepare_source.sh 74      # 或 all
 ```
 ├── bt_php_cve2026.sh            一键升级脚本
 ├── prepare_source.sh            从 php.net 官方源码 + 补丁重新生成源码包
-├── php-<版本>-cve2026.tar.gz    打好补丁的源码包（7 个版本）
+├── php-<版本>-cve2026.tar.gz    打好补丁的源码包（10 个版本：5.4 – 8.1）
 ├── SHA256SUMS                   校验值
 ├── patches/                     补丁原文
 └── tests/                       测试脚本（Ubuntu 16.04 / CentOS 7 宝塔模拟环境、压力测试、调试版本检查）
@@ -252,7 +285,7 @@ bash prepare_source.sh 74      # 或 all
 ## 注意事项
 
 - 升级后**不要**在宝塔面板里对该 PHP 版本点"更新"或"重装"，否则会被换回未打补丁的版本
-- 7.0 – 8.1 都已停止维护，本仓库只是应急方案。**长期请迁移到 PHP 8.2 或更高版本**
+- 5.4 – 8.1 都已停止维护，本仓库只是应急方案。**长期请迁移到 PHP 8.2 或更高版本**
 - 使用前请先在测试环境验证你自己的业务。本仓库按"原样"提供，不对使用后果承担责任
 
 ## 许可
