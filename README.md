@@ -1,5 +1,7 @@
 # php2shell-fixed
 
+> 联系方式：有事情可以联系 <https://x.com/0xTYZ>
+
 宝塔面板（BT Panel）上已停止维护的 PHP 版本（7.0 – 8.1）的 **PHP2Shell（CVE-2026-109618 / CVE-2026-109619）修复包**。仓库里有打好补丁的源码包，以及一键完成编译、替换、回滚的脚本。
 
 > Patched PHP source tarballs and a one-command upgrade script that fix PHP2Shell (CVE-2026-109618 / CVE-2026-109619) for end-of-life PHP 7.0 – 8.1 builds installed by BT Panel (宝塔).
@@ -246,10 +248,6 @@ bash prepare_source.sh 74      # 或 all
 - 升级后**不要**在宝塔面板里对该 PHP 版本点"更新"或"重装"，否则会被换回未打补丁的版本
 - 7.0 – 8.1 都已停止维护，本仓库只是应急方案。**长期请迁移到 PHP 8.2 或更高版本**
 - 使用前请先在测试环境验证你自己的业务。本仓库按"原样"提供，不对使用后果承担责任
-
-## 联系方式
-
-有事情可以联系：<https://x.com/0xTYZ>
 
 ## 许可
 
