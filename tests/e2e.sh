@@ -1,6 +1,6 @@
 #!/bin/bash
 # End-to-end test for one PHP branch on a simulated BT server.
-# usage: e2e.sh <70|71|72|81> <old-version>
+# usage: e2e.sh <70|71|72|73|74|80|81> <old-version>   (SKIP_RT=1 skips regression tests)
 VER=$1; OLD=$2
 set -u
 P=/www/server/php/$VER
@@ -10,7 +10,8 @@ log() { echo "##### [$VER] $*"; }
 COMMON="--prefix=$P --with-config-file-path=$P/etc --enable-fpm --with-fpm-user=www --with-fpm-group=www --enable-mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-iconv-dir --with-zlib --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --enable-mbregex --enable-mbstring --enable-intl --enable-ftp --with-mhash --enable-pcntl --enable-sockets --enable-soap --with-gettext --disable-fileinfo --enable-opcache"
 case $VER in
   70|71) CFG="$COMMON --with-freetype-dir=/usr/local/freetype --with-jpeg-dir --with-png-dir --with-curl=/usr/local/curl --with-gd --with-openssl=/usr/local/openssl --with-mcrypt --with-xmlrpc --with-webp-dir=/usr" ;;
-  72)    CFG="$COMMON --with-freetype-dir=/usr/local/freetype --with-jpeg-dir --with-png-dir --with-curl=/usr/local/curl --with-gd --with-openssl=/usr/local/openssl --with-xmlrpc --with-sodium=/usr/local/libsodium --with-webp-dir=/usr" ;;
+  72|73) CFG="$COMMON --with-freetype-dir=/usr/local/freetype --with-jpeg-dir --with-png-dir --with-curl=/usr/local/curl --with-gd --with-openssl=/usr/local/openssl --with-xmlrpc --with-sodium=/usr/local/libsodium --with-webp-dir=/usr" ;;
+  74)    CFG="$COMMON --with-freetype --with-jpeg --with-curl --enable-gd --with-openssl --with-sodium --with-webp --with-xmlrpc" ;;
   80|81) CFG="$COMMON --with-freetype --with-jpeg --with-curl --enable-gd --with-openssl --with-sodium --with-webp" ;;
 esac
 
@@ -81,6 +82,7 @@ log "rollback + reinstall"
 bash bt_php_cve2026.sh rollback $VER 2>&1 | tail -2; r index.php
 bash bt_php_cve2026.sh install $VER 2>&1 | tail -3; r index.php
 
+if [ "${SKIP_RT:-0}" = 1 ]; then log "DONE (regression tests skipped)"; exit 0; fi
 log "regression tests: old tree vs patched tree"
 TESTS="Zend/tests tests/basic tests/lang ext/session/tests ext/standard/tests/strings ext/standard/tests/general_functions ext/standard/tests/array"
 NEW=$(ls -d /www/server/php-cve2026/build-$VER/php-*)

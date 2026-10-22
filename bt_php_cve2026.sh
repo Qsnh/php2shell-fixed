@@ -163,7 +163,9 @@ do_build() {
 
     # 5. 新旧 php-fpm 链接的系统库必须一致（防止误用系统自带的 openssl/curl 等）
     local libdiff
-    libdiff=$(diff <(linked_libs "$PREFIX/sbin/php-fpm") <(linked_libs "$SRC_DIR/sapi/fpm/php-fpm"))
+    # 只用 coreutils 的 comm（精简安装的系统可能没有 diff）
+    libdiff=$(comm -3 <(linked_libs "$PREFIX/sbin/php-fpm") <(linked_libs "$SRC_DIR/sapi/fpm/php-fpm") \
+        | sed -e 's/^\t/> /' -e 't' -e 's/^/< /')
     if [ -n "$libdiff" ]; then
         echo "$libdiff" | tee "$LOG_DIR/libdiff-$VER.txt"
         if [ "${FORCE:-0}" != 1 ]; then

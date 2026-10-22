@@ -73,8 +73,8 @@ prepare() {
 }
 
 [ $# -eq 1 ] || { sed -n '3,12p' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
-command -v patch >/dev/null || { echo "缺少 patch 命令：apt-get install -y patch"; exit 1; }
-command -v xz >/dev/null || { echo "缺少 xz 命令：apt-get install -y xz-utils"; exit 1; }
+command -v patch >/dev/null || { echo "缺少 patch 命令：apt-get install -y patch 或 yum install -y patch"; exit 1; }
+command -v xz >/dev/null || { echo "缺少 xz 命令：apt-get install -y xz-utils 或 yum install -y xz"; exit 1; }
 
 if [ "$1" = all ]; then
     for v in 70 71 72 73 74 80 81; do prepare "$v"; done
